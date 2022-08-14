@@ -1,9 +1,10 @@
-package com.jensssen.wafflepod
+package com.jensssen.wafflepod.activities
 
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.jensssen.wafflepod.R
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
