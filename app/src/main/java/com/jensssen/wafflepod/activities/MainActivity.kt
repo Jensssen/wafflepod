@@ -1,14 +1,17 @@
 package com.jensssen.wafflepod.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.jensssen.wafflepod.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.jensssen.wafflepod.databinding.ActivityMainBinding
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.spotify.protocol.types.Track
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,15 +19,28 @@ class MainActivity : AppCompatActivity() {
     private val redirectUri = "wafflepod-login://callback"
     private var spotifyAppRemote: SpotifyAppRemote? = null
     private val mSpotifyImage: ImageView? = null
+    private lateinit var auth: FirebaseAuth
+    private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setContentView(R.layout.activity_main)
+        // Initialize Firebase Auth
+        auth = Firebase.auth
     }
 
     override fun onStart() {
         super.onStart()
+        // Check if user is signed in (non-null) to Firebase and update UI accordingly.
+        val currentUser = auth.currentUser
+        if(currentUser == null){
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+        }
+
+        // Check if user is signed in (non-null) to Spotify and update UI accordingly.
         val connectionParams = ConnectionParams.Builder(clientId)
             .setRedirectUri(redirectUri)
             .showAuthView(true)
@@ -46,25 +62,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun connected() {
+//        spotifyAppRemote?.let {
+//            // Play a playlist
+//            val playlistURI = "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL"
+//            it.playerApi.play(playlistURI)
+//            // Subscribe to PlayerState
+//            it.playerApi.subscribeToPlayerState().setEventCallback {
+//                val track: Track = it.track
+//                Log.d("MainActivity", track.name + " by " + track.artist.name)
+//            }
+//        }
+    }
+
+    override fun onStop() {
+        super.onStop()
         spotifyAppRemote?.let {
-            // Play a playlist
-            val playlistURI = "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL"
-            it.playerApi.play(playlistURI)
-            // Subscribe to PlayerState
-            it.playerApi.subscribeToPlayerState().setEventCallback {
-                val track: Track = it.track
-                Log.d("MainActivity", track.name + " by " + track.artist.name)
-            }
+            SpotifyAppRemote.disconnect(it)
         }
 
     }
-
-        override fun onStop() {
-            super.onStop()
-            spotifyAppRemote?.let {
-                SpotifyAppRemote.disconnect(it)
-            }
-
-        }
 
 }
