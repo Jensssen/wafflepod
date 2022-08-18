@@ -20,4 +20,10 @@
     <string name="password">password</string>
     <string name="email">Email</string>
 
+    <string name="start_listen">start listen</string>
+
+    <!-- Errors -->
+    <string name="err_spotify_disconnected">"Spotify is not Connected."</string>
+    <string name="err_generic_toast">An error has occurred. Check the logs to know more.</string>
+
 </resources>

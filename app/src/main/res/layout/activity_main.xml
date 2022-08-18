@@ -20,15 +20,26 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_main" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginStart="48dp"
+        android:progressTint="@android:color/white"
+        android:thumbTint="@android:color/white"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="center" />
+
+    <Button
+        android:id="@+id/btn_start_listen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:text="@string/start_listen"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="bottom|center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
