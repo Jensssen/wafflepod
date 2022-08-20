@@ -47,13 +47,19 @@ class MainActivity : AppCompatActivity() {
 
         trackProgressBar =
             TrackProgressBar(binding.progressbar) { seekToPosition: Long -> seekTo(seekToPosition) }
+
+        binding.btnLogOut.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            if (auth.currentUser == null) {
+                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) to Firebase and update UI accordingly.
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
+        if (auth.currentUser == null) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
         }
 

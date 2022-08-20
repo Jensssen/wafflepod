@@ -19,8 +19,10 @@
     <string name="not_registered_yet">Not registered yet?</string>
     <string name="password">password</string>
     <string name="email">Email</string>
+    <string name="username">User Name</string>
 
     <string name="start_listen">start listen</string>
+    <string name="logout">logout</string>
 
     <!-- Errors -->
     <string name="err_spotify_disconnected">"Spotify is not Connected."</string>

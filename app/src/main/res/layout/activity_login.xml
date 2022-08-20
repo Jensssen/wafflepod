@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
         android:text="@string/login"
         android:textColor="@color/teal_700"
@@ -34,29 +34,56 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivlogin" />
 
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/etLogInName"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:hint="@string/username"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvlogin" />
 
-    <TextView
-        android:id="@+id/tvRegHere"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/etLogInEmail"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="96dp"
-        android:text="@string/register_here"
-        android:textColor="@color/teal_700"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etLogInName" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/etLogInPass"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etLogInEmail" />
 
     <TextView
         android:id="@+id/tvNotReg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="5dp"
         android:text="@string/not_registered_yet"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/tvRegHere"
-        app:layout_constraintHorizontal_bias="0.925"
+        app:layout_constraintHorizontal_bias="0.891"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvRegHere" />
 
@@ -64,7 +91,7 @@
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:text="@string/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -72,28 +99,19 @@
         app:layout_constraintTop_toBottomOf="@+id/etLogInPass"
         tools:ignore="DuplicateSpeakableTextCheck" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/etLogInPass"
-        android:layout_width="300dp"
+    <TextView
+        android:id="@+id/tvRegHere"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:minHeight="48dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="92dp"
+        android:text="@string/register_here"
+        android:textColor="@color/teal_700"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etLogInEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/etLogInEmail"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvlogin" />
-    
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
