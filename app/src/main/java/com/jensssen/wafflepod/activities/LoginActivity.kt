@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
         Log.d(TAG, "Enter Login Activity" + currentUser.toString())
         Log.d(TAG, currentUser.toString())
 
-        if(currentUser != null){
+        if (currentUser != null) {
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
         }
 

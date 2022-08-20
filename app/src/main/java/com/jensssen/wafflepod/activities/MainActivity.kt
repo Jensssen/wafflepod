@@ -147,7 +147,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSeekbar(playerState: PlayerState) {
-        // Update progressbar
         trackProgressBar.apply {
             if (playerState.playbackSpeed > 0) {
                 unpause()

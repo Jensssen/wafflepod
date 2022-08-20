@@ -38,7 +38,6 @@ class TrackProgressBar(private val seekBar: SeekBar, private val seekStopListene
 
     fun update(progress: Long) {
         seekBar.progress = progress.toInt()
-        Log.d("aaa", "ccc")
     }
 
     fun pause() {
