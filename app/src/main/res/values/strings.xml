@@ -28,4 +28,9 @@
     <string name="err_spotify_disconnected">"Spotify is not Connected."</string>
     <string name="err_generic_toast">An error has occurred. Check the logs to know more.</string>
 
+    <!-- Message item -->
+    <string name="title">Simple Title Text.</string>
+    <string name="date">Date</string>
+    <string name="message">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</string>
+
 </resources>
