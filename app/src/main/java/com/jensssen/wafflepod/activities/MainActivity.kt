@@ -1,11 +1,15 @@
 package com.jensssen.wafflepod.activities
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
@@ -26,8 +31,10 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException
 import com.spotify.protocol.client.Subscription
+import com.spotify.protocol.types.Image
+import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.PlayerState
-import kotlin.collections.ArrayList
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,9 +57,12 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivityyyy"
     private lateinit var trackProgressBar: TrackProgressBar
     private var playerStateSubscription: Subscription<PlayerState>? = null
+    private lateinit var currentPlayerState: PlayerState
     private val errorCallback = { throwable: Throwable -> logError(throwable) }
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val db = Firebase.firestore
+    private lateinit var name: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +73,8 @@ class MainActivity : AppCompatActivity() {
         // Initialize Firebase Auth
         auth = Firebase.auth
 
+        getUserNameByUID("users", auth.uid.toString())
+
         trackProgressBar =
             TrackProgressBar(binding.progressbar) { seekToPosition: Long -> seekTo(seekToPosition) }
 
@@ -70,9 +82,8 @@ class MainActivity : AppCompatActivity() {
         adapter = MessageAdapter(this, messageList)
         binding.messageBox.layoutManager = LinearLayoutManager(this)
         binding.messageBox.adapter = adapter
-    }
+}
 
-    @SuppressLint("SimpleDateFormat")
     override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) to Firebase and update UI accordingly.
@@ -99,6 +110,60 @@ class MainActivity : AppCompatActivity() {
                 // Something went wrong when attempting to connect! Handle errors here
             }
         })
+
+        binding.btnSend.setOnClickListener {
+            sendMessage()
+        }
+    }
+
+    private fun sendMessage() {
+        val message = binding.etMessage.text.toString()
+        if (!TextUtils.isEmpty(message)) {
+            val newMessage = Message(
+                date = "1.2.22",
+                message = binding.etMessage.text.toString(),
+                author = name,
+                uri = auth.uid.toString(),
+                position = currentPlayerState.playbackPosition.toInt()/1000
+            )
+            uploadUserToDb(newMessage)
+            binding.etMessage.clearFocus()
+            binding.etMessage.setText("")
+            closeKeyBoard(binding.etMessage)
+            messageList.add(0, newMessage)
+            adapter.notifyDataSetChanged()
+
+        } else {
+            Toast.makeText(
+                baseContext,
+                "Message is empty!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun closeKeyBoard(view: View) {
+        val inputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+
+    private fun uploadUserToDb(message: Message) {
+        // Add a new user to DB
+        db.collection("messages/${currentPlayerState.track.uri}/messages").document()
+            .set(message)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: $documentReference")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error adding user to db", e)
+                Toast.makeText(
+                    baseContext,
+                    e.message.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -108,7 +173,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.logout){
+        if (item.itemId == R.id.logout) {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this@MainActivity, LoginActivity::class.java)
             finish()
@@ -176,17 +241,36 @@ class MainActivity : AppCompatActivity() {
 
     private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
         Log.v(TAG, String.format("Player State: %s", gson.toJson(playerState)))
+        currentPlayerState = playerState
         updateSeekbar(playerState)
 
-        db.collection("messages/${playerState.track.uri}/messages")
+        val imageUri = ImageUri(playerState.track.imageUri.raw)
+
+        spotifyAppRemote
+            ?.imagesApi
+            ?.getImage(imageUri, Image.Dimension.THUMBNAIL)
+            ?.setResultCallback { bitmap: Bitmap? -> binding.imgTrack.setImageBitmap(bitmap) }
+
+        getMultipleDocumentsByQuery("messages/${playerState.track.uri}/messages")
+    }
+
+    private fun getMultipleDocumentsByQuery(path: String) {
+
+        db.collection(path)
             .whereGreaterThan("position", 10)
             .get()
             .addOnSuccessListener { documents ->
                 messageList.clear()
                 for (document in documents) {
-//                    Log.d(TAG, "${document.id} => ${document.data}")
-                    messageList.add(Message("1.2.2022", document.data["message"]?.toString(), document.data["username"]?.toString()))
-                    Log.d(TAG, document.data["username"].toString())
+                    messageList.add(
+                        Message(
+                            date = "1.2.2022",
+                            message = document.data["message"]?.toString(),
+                            author = document.data["author"]?.toString(),
+                            uri = document.data["uri"]?.toString(),
+                            position = document.data["position"].toString().toInt()
+                        )
+                    )
                 }
                 adapter.notifyDataSetChanged()
             }
@@ -194,6 +278,25 @@ class MainActivity : AppCompatActivity() {
                 Log.w(TAG, "Error getting documents: ", exception)
             }
 
+    }
+
+    private fun getUserNameByUID(path: String, uid: String) {
+        val docRef: DocumentReference = db.collection(path).document(uid)
+
+        docRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val document = task.result
+                if (document != null) {
+                    Log.d(TAG, "DocumentSnapshot data: " + task.result.data)
+                    name = document.data?.get("name").toString()
+
+                } else {
+                    Log.d(TAG, "No such document")
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.exception)
+            }
+        }
     }
 
 
