@@ -38,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
 
         if (currentUser != null) {
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            finish()
         }
 
         // Register or login User
@@ -84,8 +85,8 @@ class LoginActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithEmail:success")
-                        val user = auth.currentUser
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -146,6 +147,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot added with ID: $documentReference")
                 startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                finish()
                 success = true
             }
             .addOnFailureListener { e ->

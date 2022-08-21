@@ -1,15 +1,24 @@
 package com.jensssen.wafflepod.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
+import com.jensssen.wafflepod.Adapter.MessageAdapter
 import com.jensssen.wafflepod.R
+import com.jensssen.wafflepod.classes.Message
 import com.jensssen.wafflepod.classes.TrackProgressBar
 import com.jensssen.wafflepod.databinding.ActivityMainBinding
 import com.spotify.android.appremote.api.ConnectionParams
@@ -18,7 +27,7 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.PlayerState
-import com.spotify.protocol.types.Track
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,17 +39,26 @@ class MainActivity : AppCompatActivity() {
     // Firebase
     private lateinit var auth: FirebaseAuth
 
+    // Message Box
+    private lateinit var messageRecyclerView: RecyclerView
+    private lateinit var messageList: ArrayList<Message>
+    private lateinit var adapter: MessageAdapter
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
     private val TAG = "MainActivityyyy"
     private lateinit var trackProgressBar: TrackProgressBar
     private var playerStateSubscription: Subscription<PlayerState>? = null
     private val errorCallback = { throwable: Throwable -> logError(throwable) }
     private val gson = GsonBuilder().setPrettyPrinting().create()
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         // Initialize Firebase Auth
         auth = Firebase.auth
@@ -48,14 +66,13 @@ class MainActivity : AppCompatActivity() {
         trackProgressBar =
             TrackProgressBar(binding.progressbar) { seekToPosition: Long -> seekTo(seekToPosition) }
 
-        binding.btnLogOut.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            if (auth.currentUser == null) {
-                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-            }
-        }
+        messageList = ArrayList()
+        adapter = MessageAdapter(this, messageList)
+        binding.messageBox.layoutManager = LinearLayoutManager(this)
+        binding.messageBox.adapter = adapter
     }
 
+    @SuppressLint("SimpleDateFormat")
     override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) to Firebase and update UI accordingly.
@@ -82,6 +99,22 @@ class MainActivity : AppCompatActivity() {
                 // Something went wrong when attempting to connect! Handle errors here
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.logout){
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            finish()
+            startActivity(intent)
+        }
+        return true
     }
 
     private fun connected() {
@@ -144,6 +177,23 @@ class MainActivity : AppCompatActivity() {
     private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
         Log.v(TAG, String.format("Player State: %s", gson.toJson(playerState)))
         updateSeekbar(playerState)
+
+        db.collection("messages/${playerState.track.uri}/messages")
+            .whereGreaterThan("position", 10)
+            .get()
+            .addOnSuccessListener { documents ->
+                messageList.clear()
+                for (document in documents) {
+//                    Log.d(TAG, "${document.id} => ${document.data}")
+                    messageList.add(Message("1.2.2022", document.data["message"]?.toString(), document.data["username"]?.toString()))
+                    Log.d(TAG, document.data["username"].toString())
+                }
+                adapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
     }
 
 

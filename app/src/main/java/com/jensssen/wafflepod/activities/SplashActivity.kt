@@ -32,7 +32,7 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                 finish()  // Call this when your activity is done and should be closed
             },
-            1500
+            800
         )
     }
 }
