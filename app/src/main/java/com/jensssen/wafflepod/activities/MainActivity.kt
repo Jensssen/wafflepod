@@ -23,8 +23,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import com.jensssen.wafflepod.Adapter.MessageAdapter
 import com.jensssen.wafflepod.R
-import com.jensssen.wafflepod.classes.Message
-import com.jensssen.wafflepod.classes.TrackProgressBar
+import com.jensssen.wafflepod.classes.*
 import com.jensssen.wafflepod.databinding.ActivityMainBinding
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
@@ -47,13 +46,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
     // Message Box
-    private lateinit var messageRecyclerView: RecyclerView
+    private lateinit var messageHandler: MessageHandler
     private lateinit var messageList: ArrayList<Message>
     private lateinit var adapter: MessageAdapter
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-
     private val TAG = "MainActivityyyy"
     private lateinit var trackProgressBar: TrackProgressBar
     private var playerStateSubscription: Subscription<PlayerState>? = null
@@ -75,11 +71,12 @@ class MainActivity : AppCompatActivity() {
 
         getUserNameByUID("users", auth.uid.toString())
 
+        messageHandler = MessageHandler
+        adapter = MessageAdapter(this, messageHandler.getFinalMessageList())
         trackProgressBar =
-            TrackProgressBar(binding.progressbar) { seekToPosition: Long -> seekTo(seekToPosition) }
+            TrackProgressBar(binding.progressbar, adapter) { seekToPosition: Long -> seekTo(seekToPosition) }
 
         messageList = ArrayList()
-        adapter = MessageAdapter(this, messageList)
         binding.messageBox.layoutManager = LinearLayoutManager(this)
         binding.messageBox.adapter = adapter
 }
@@ -124,13 +121,14 @@ class MainActivity : AppCompatActivity() {
                 message = binding.etMessage.text.toString(),
                 author = name,
                 uri = auth.uid.toString(),
-                position = currentPlayerState.playbackPosition.toInt()/1000
+                position = MessageHandler.getCurrentPlaybackPosition()
             )
             uploadUserToDb(newMessage)
             binding.etMessage.clearFocus()
             binding.etMessage.setText("")
             closeKeyBoard(binding.etMessage)
             messageList.add(0, newMessage)
+            messageHandler.addMessageToList(0, newMessage, adapter)
             adapter.notifyDataSetChanged()
 
         } else {
@@ -244,41 +242,20 @@ class MainActivity : AppCompatActivity() {
         currentPlayerState = playerState
         updateSeekbar(playerState)
 
-        val imageUri = ImageUri(playerState.track.imageUri.raw)
+        // Update Local Player State
+        MessageHandler.setCurrentPlaybackPosition(playerState.playbackPosition.toInt()/1000)
+        MessageHandler.setCurrentTrackLength(playerState.track.duration/1000)
 
+        // Update Image
+        val imageUri = ImageUri(playerState.track.imageUri.raw)
         spotifyAppRemote
             ?.imagesApi
             ?.getImage(imageUri, Image.Dimension.THUMBNAIL)
             ?.setResultCallback { bitmap: Bitmap? -> binding.imgTrack.setImageBitmap(bitmap) }
 
-        getMultipleDocumentsByQuery("messages/${playerState.track.uri}/messages")
+        messageHandler.populateFullMessageList("messages/${playerState.track.uri}/messages", playerState.track.uri, db, adapter)
     }
 
-    private fun getMultipleDocumentsByQuery(path: String) {
-
-        db.collection(path)
-            .whereGreaterThan("position", 10)
-            .get()
-            .addOnSuccessListener { documents ->
-                messageList.clear()
-                for (document in documents) {
-                    messageList.add(
-                        Message(
-                            date = "1.2.2022",
-                            message = document.data["message"]?.toString(),
-                            author = document.data["author"]?.toString(),
-                            uri = document.data["uri"]?.toString(),
-                            position = document.data["position"].toString().toInt()
-                        )
-                    )
-                }
-                adapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
-            }
-
-    }
 
     private fun getUserNameByUID(path: String, uid: String) {
         val docRef: DocumentReference = db.collection(path).document(uid)

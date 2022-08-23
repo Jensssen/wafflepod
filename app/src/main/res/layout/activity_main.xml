@@ -27,7 +27,6 @@
         android:id="@+id/progressbar"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:layout_marginTop="48dp"
         android:progressTint="@android:color/white"
         android:thumbTint="@android:color/white"
         app:layout_anchor="@+id/appBarLayout"
@@ -35,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgTrack" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <EditText
         android:id="@+id/etMessage"
@@ -87,6 +86,212 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgTrack" >
+
+        <Button
+            android:id="@+id/btnBar1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:background="@drawable/shapes"/>
+
+        <Button
+            android:id="@+id/btnBar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="1dp"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+
+        <Button
+            android:id="@+id/btnBar24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
